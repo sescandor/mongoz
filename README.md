@@ -29,3 +29,21 @@ as a drop-in replacement for mongos. Moreover, it can freely coexist
 with mongos within a same MongoDB cluster if neccessary.
 
 More detailed description of mongoz features can be found in its man page.
+
+How to get it started:
+1. Install automake
+2. Run: 
+   * aclocal
+   * automake --add-missing
+   * autoconf
+   You may need to use autoreconf -i if you have issues running the above. Then run automake and autoconf again.
+3. Run: ./configure
+4. Run: make mongoz
+5. You will run into a link issue where it will look for the symbol 'pthread_wrlock_rlock@@GLIBC_2.2.5' you will need to modify the Makefile such that it looks like:
+
+mongoz$(EXEEXT): $(mongoz_OBJECTS) $(mongoz_DEPENDENCIES) $(EXTRA_mongoz_DEPENDENCIES)
+        @rm -f mongoz$(EXEEXT)
+        $(AM_V_CXXLD) $(mongoz_LINK)$(mongoz_OBJECTS) $(mongoz_LDADD) $(LIBS) $(mongoz_LDFLAGS)
+
+notice that $(mongoz_LDFLAGS) is now last, as is mentioned in:
+https://stackoverflow.com/questions/19901934/strange-linking-error-dso-missing-from-command-line
